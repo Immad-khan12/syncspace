@@ -1,0 +1,68 @@
+@import "tailwindcss";
+
+@theme {
+  /* ── Color Palette ── */
+  --color-bg-primary: #0F172A;
+  --color-bg-secondary: #111827;
+  --color-bg-tertiary: #1E293B;
+  --color-accent: #6366F1;
+  --color-accent-hover: #4F46E5;
+  --color-accent-secondary: #8B5CF6;
+  --color-success: #10B981;
+  --color-danger: #EF4444;
+  --color-warning: #F59E0B;
+  --color-text-primary: #F8FAFC;
+  --color-text-secondary: #94A3B8;
+  --color-text-muted: #475569;
+  --color-border: #1E293B;
+  --color-border-light: #334155;
+
+  /* ── Typography ── */
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  /* ── Shadows ── */
+  --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.3);
+  --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.4);
+}
+
+/* ── Base Styles ── */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #0F172A;
+  color: #F8FAFC;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Custom scrollbar ── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0F172A;
+}
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #6366F1;
+}
+
+/* ── Selection color ── */
+::selection {
+  background: rgba(99, 102, 241, 0.3);
+  color: #F8FAFC;
+}
+
+/* ── Focus ring ── */
+:focus-visible {
+  outline: 2px solid #6366F1;
+  outline-offset: 2px;
+}
