@@ -125,6 +125,13 @@ export default function Sidebar() {
         </div>
       </nav>
 
+      {/* Copyright */}
+      <div className="px-3 py-1">
+        <p className="text-[9px] text-[#334155] text-center leading-relaxed">
+          © 2024 Muhammad Immad Shahzad
+        </p>
+      </div>
+
       {/* User + Logout */}
       <div className="p-3 border-t border-[#1E293B]">
         <div className="flex items-center gap-2.5 p-2 rounded-lg">

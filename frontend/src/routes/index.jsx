@@ -4,6 +4,8 @@ import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import Dashboard from '@/pages/Dashboard';
 import Documents from '@/pages/Documents';
 import Editor from '@/pages/Editor';
+import Settings from '@/pages/Settings';
+import Members from '@/pages/Members';
 import Login from '@/pages/auth/Login';
 import Register from '@/pages/auth/Register';
 
@@ -23,8 +25,8 @@ const router = createBrowserRouter([
       { path: 'dashboard', element: <Dashboard /> },
       { path: 'documents', element: <Documents /> },
       { path: 'recent',    element: <Documents /> },
-      { path: 'members',   element: <div className="p-6 text-[#F8FAFC] text-xl font-semibold">Members — Coming Soon</div> },
-      { path: 'settings',  element: <div className="p-6 text-[#F8FAFC] text-xl font-semibold">Settings — Coming Soon</div> },
+      { path: 'members',   element: <Members /> },
+      { path: 'settings',  element: <Settings /> },
     ],
   },
 
