@@ -9,13 +9,12 @@ import axios from 'axios';
 import useAuthStore from '@/store/authStore';
 
 const api = axios.create({
-  baseURL: '/api',          // proxied to http://localhost:5000/api by Vite
-  withCredentials: true,    // sends cookies (for the refresh token)
-  timeout: 10000,           // 10 second timeout — don't hang forever
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api', // ✅ FIXED
+  withCredentials: true,
+  timeout: 60000, // ✅ 60s — Render cold start ke liye
 });
 
 // ─── REQUEST INTERCEPTOR ─────────────────────────────────────────────────────
-// Runs before every request — attaches the current access token
 api.interceptors.request.use(
   (config) => {
     const token = useAuthStore.getState().accessToken;
@@ -28,12 +27,8 @@ api.interceptors.request.use(
 );
 
 // ─── RESPONSE INTERCEPTOR ────────────────────────────────────────────────────
-// Runs after every response.
-// On 401 (token expired): silently refresh and retry the original request.
-// This is what makes the "seamless session" experience possible.
-
 let isRefreshing = false;
-let failedQueue  = []; // queue of requests waiting for the new token
+let failedQueue  = [];
 
 const processQueue = (error, token = null) => {
   failedQueue.forEach((promise) => {
@@ -44,19 +39,26 @@ const processQueue = (error, token = null) => {
 };
 
 api.interceptors.response.use(
-  (response) => response, // pass through successful responses
+  (response) => response,
 
   async (error) => {
     const originalRequest = error.config;
 
-    // If 401 and we haven't already retried this request
+    // ✅ Render cold start retry — network timeout pe dobara try karo
+    if (
+      (error.code === 'ECONNABORTED' || error.code === 'ERR_NETWORK') &&
+      !originalRequest._retry
+    ) {
+      originalRequest._retry = true;
+      return api(originalRequest);
+    }
+
     if (
       error.response?.status === 401 &&
       !originalRequest._retry &&
       error.response?.data?.code === 'TOKEN_EXPIRED'
     ) {
       if (isRefreshing) {
-        // Another request is already refreshing — queue this one
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
         }).then((token) => {
