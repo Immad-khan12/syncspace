@@ -13,6 +13,7 @@ export const getDocuments = async (req, res, next) => {
       $or: [
         { owner: userId },
         { 'collaborators.user': userId },
+        { isPublic: true },           // ✅ NEW — public docs bhi dikhein
       ],
       isArchived: false,
     })
@@ -65,7 +66,6 @@ export const getDocument = async (req, res, next) => {
 // ─── CREATE DOCUMENT ──────────────────────────────────────────────────────────
 export const createDocument = async (req, res, next) => {
   try {
-    // Fix: safely destructure — req.body undefined hone pe bhi kaam kare
     const title  = req.body?.title || 'Untitled Document';
     const icon   = req.body?.icon  || '📄';
     const userId = req.user._id;
@@ -145,7 +145,10 @@ export const deleteDocument = async (req, res, next) => {
     }
 
     if (document.owner.toString() !== userId.toString()) {
-      return res.status(403).json({ success: false, message: 'Only the owner can delete this document' });
+      return res.status(403).json({
+        success: false,
+        message: 'Only the owner can delete this document',
+      });
     }
 
     document.isArchived = true;
@@ -182,7 +185,10 @@ export const inviteCollaborator = async (req, res, next) => {
       (c) => c.user.toString() === userId
     );
     if (alreadyAdded) {
-      return res.status(409).json({ success: false, message: 'User is already a collaborator' });
+      return res.status(409).json({
+        success: false,
+        message: 'User is already a collaborator',
+      });
     }
 
     document.collaborators.push({ user: userId, role: role || 'editor' });

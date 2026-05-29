@@ -1,5 +1,4 @@
 // server.js — The entry point for the entire backend application
-// Updated: Phase 4 — Socket.io + Document routes fully wired
 
 import express from 'express';
 import { createServer } from 'http';
@@ -10,7 +9,6 @@ import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 
-// Load environment variables FIRST — before anything uses process.env
 dotenv.config();
 
 import { connectDB } from './config/database.js';
@@ -21,10 +19,17 @@ import { initializeSocketHandlers } from './sockets/socketHandlers.js';
 const app = express();
 const httpServer = createServer(app);
 
+// ✅ FIXED — multiple origins accept karta hai
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://syncspace-ivory.vercel.app',
+  process.env.CLIENT_URL,
+].filter(Boolean);
+
 // ─── SOCKET.IO SETUP ─────────────────────────────────────────────────────────
 const io = new Server(httpServer, {
   cors: {
-    origin: process.env.CLIENT_URL || 'http://localhost:5173',
+    origin: allowedOrigins, // ✅ FIXED
     methods: ['GET', 'POST'],
     credentials: true,
   },
@@ -36,7 +41,7 @@ const io = new Server(httpServer, {
 app.use(helmet());
 
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+  origin: allowedOrigins, // ✅ FIXED
   credentials: true,
 }));
 
@@ -79,12 +84,12 @@ const PORT = process.env.PORT || 5000;
 const startServer = async () => {
   try {
     await connectDB();
-
     httpServer.listen(PORT, () => {
       console.log(`✅ Server running on port ${PORT}`);
       console.log(`🔗 Health check: http://localhost:${PORT}/api/health`);
       console.log(`⚡ Socket.io ready for realtime connections`);
       console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+      console.log(`✅ Allowed origins:`, allowedOrigins);
     });
   } catch (error) {
     console.error('❌ Failed to start server:', error.message);
