@@ -13,7 +13,7 @@ export const getDocuments = async (req, res, next) => {
       $or: [
         { owner: userId },
         { 'collaborators.user': userId },
-        { isPublic: true },           // ✅ NEW — public docs bhi dikhein
+        { isPublic: true },           // ✅ sab public documents dikhein
       ],
       isArchived: false,
     })
@@ -74,6 +74,7 @@ export const createDocument = async (req, res, next) => {
       title,
       icon,
       owner: userId,
+      isPublic: true,                // ✅ naye documents public honge
       collaborators: [{ user: userId, role: 'admin' }],
     });
 

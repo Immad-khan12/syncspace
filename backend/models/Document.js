@@ -30,54 +30,45 @@ const documentSchema = new mongoose.Schema(
       default: 'Untitled Document',
     },
 
-    // Yjs stores document content as a binary state vector
-    // We store it as a Buffer in MongoDB for efficient sync
     yjsState: {
       type: Buffer,
       default: null,
     },
 
-    // Plain text version — used for search and previews
     content: {
       type: String,
       default: '',
     },
 
-    // Emoji icon for the document
     icon: {
       type: String,
       default: '📄',
     },
 
-    // Cover image URL
     coverImage: {
       type: String,
       default: null,
     },
 
-    // The user who created the document
     owner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: true,
     },
 
-    // All users who have access — owner is always the first collaborator
     collaborators: [collaboratorSchema],
 
-    // Is this document publicly accessible via link?
+    // ✅ FIXED — ab har document by default public hoga
     isPublic: {
       type: Boolean,
-      default: false,
+      default: true,
     },
 
-    // Soft delete — we never hard delete documents
     isArchived: {
       type: Boolean,
       default: false,
     },
 
-    // Last time someone actually edited the content
     lastEditedAt: {
       type: Date,
       default: Date.now,
@@ -89,22 +80,20 @@ const documentSchema = new mongoose.Schema(
       default: null,
     },
 
-    // Word count — updated on every save
     wordCount: {
       type: Number,
       default: 0,
     },
   },
   {
-    timestamps: true, // adds createdAt and updatedAt
+    timestamps: true,
   }
 );
 
 // ─── INDEXES ─────────────────────────────────────────────────────────────────
-// Indexes make queries fast — critical for production performance
 documentSchema.index({ owner: 1, createdAt: -1 });
 documentSchema.index({ 'collaborators.user': 1 });
-documentSchema.index({ title: 'text', content: 'text' }); // full-text search
+documentSchema.index({ title: 'text', content: 'text' });
 
 const Document = mongoose.model('Document', documentSchema);
 export default Document;
